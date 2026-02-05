@@ -112,12 +112,18 @@ public class ScrewtapeInterpreter {
     Stack<Integer> holding = new Stack<>();
     for (char x : program.toCharArray()) {
       if (x==']') {
+        if (holding.isEmpty()) {
+          throw new IllegalArgumentException();
+        }
         output.put(tracking, holding.pop());
       }
       if (x=='[') {
         holding.push(tracking);
       }
       tracking++;
+    }
+    if (!holding.isEmpty()) {
+      throw new IllegalArgumentException();
     }
     return output;
   }
@@ -141,8 +147,47 @@ public class ScrewtapeInterpreter {
    * @throws IllegalArgumentException If the program contains unmatched brackets.
    */
   public String execute(String program) {
-    // TODO: Implement this
-    // If you get stuck, you can look at hint.md for a hint
-    return null;
+    int pointer = 0;
+    String output = "";
+    moveTapePointerToHead();
+    Map<Integer, Integer> loops = bracketMap(program);
+    while (pointer < program.length()) {
+      if (program.charAt(pointer)=='+') {
+        tapePointer.value++;
+      }
+      else if (program.charAt(pointer)=='-') {
+        tapePointer.value--;
+      }
+      else if (program.charAt(pointer)=='>') {
+        if (tapePointer.next==null) {
+          tapePointer.next = new Node(0);
+          Node temporary = tapePointer;
+          tapePointer = tapePointer.next;
+          tapePointer.prev = temporary;
+        }
+        else {tapePointer=tapePointer.next;}
+      }
+      else if (program.charAt(pointer)=='<') {
+        if (tapePointer.prev==null) {
+          tapePointer.prev = new Node(0);
+          Node temporary = tapePointer;
+          tapePointer = tapePointer.prev;
+          tapePointer.next = temporary;
+          tapeHead = tapePointer;
+        }
+        else {tapePointer=tapePointer.prev;}
+
+      }
+      else if(program.charAt(pointer)=='.') {
+        output = output + Character.toString((char) tapePointer.value);
+      }
+      else if(loops.containsKey(pointer)) {
+        if (tapePointer.value!=0) {
+        pointer = loops.get(pointer);
+      }
+    }
+      pointer++;
+    }
+    return output;
   }
 }
