@@ -59,7 +59,6 @@ class NodeTest {
 
     assertEquals(head.next.next.prev.value, 3);
   }
-  // TODO: Add at least one more test for list constructor that would be useful and cover new ground.
 
 
   // -------- WAVE 2 -------
@@ -83,6 +82,20 @@ class NodeTest {
     assertEquals(List.of(5, 7, 3), values);
   }
 
-  // TODO: Add test for Node with no next or prev
-  // TODO: Add at least one more test for list constructor that would be useful and cover new ground.
+  @Test
+  void loneNode() {
+    Node head = new Node(3);
+    List<Integer> x = head.toList();
+    assertEquals(x.get(0) , 3);
+  }
+
+  @Test
+  void longNodes() {
+    List<Integer> testing = List.of(5,6,7,8,9,1,3,5,9,0,8);
+    Node head = new Node(testing);
+    Node current = head;
+    current = current.next.next.next;
+    List<Integer> x = head.toList();
+    assertEquals(x.get(3), 8);
+  }
 }
